@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>2048 H5小游戏（主题切换版）</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <h1>2048</h1>
+      <div class="right">
+        <div class="score-box">
+          <div class="label">分数</div>
+          <div class="value" id="score">0</div>
+        </div>
+
+        <button class="btn" id="restartBtn">重新开始</button>
+
+        <select id="themeSelect" class="theme-select" title="切换主题">
+          <option value="classic">原味</option>
+          <option value="pink">猛男粉</option>
+          <option value="red">高能红</option>
+          <option value="yolk">咸蛋黄</option>
+          <option value="green">头顶绿</option>
+          <option value="blue">晴天蓝</option>
+          <option value="purple">基佬紫</option>
+          <option value="black">非常黑</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="tips">电脑：方向键操作；手机：在棋盘上滑动</div>
+
+    <div class="board-wrap" id="boardWrap">
+      <div class="grid" id="grid"></div>
+      <div class="mask" id="mask">
+        <h2 id="maskTitle">游戏结束</h2>
+        <p id="maskText">再来一局？</p>
+        <button class="btn" id="maskRestartBtn">重新开始</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>
