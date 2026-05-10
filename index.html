@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TreGameWeb - 开源H5小游戏站点</title>
+    <style>
+        :root {
+            --bg-gradient-start: #f0f4ff;
+            --bg-gradient-mid: #faf5ff;
+            --bg-gradient-end: #f5f9ff;
+            --card-bg: #ffffff;
+            --card-shadow: 0 4px 20px rgba(100, 80, 180, 0.08);
+            --card-hover-shadow: 0 12px 36px rgba(100, 80, 180, 0.18);
+            --text-primary: #2d2347;
+            --text-secondary: #5c5a6b;
+            --text-muted: #9b97a8;
+            --accent: #6c5ce7;
+            --accent-light: #8b7cf0;
+            --accent-glow: rgba(108, 92, 231, 0.25);
+            --btn-gradient: linear-gradient(135deg, #6c5ce7 0%, #8b5cf0 50%, #a363d4 100%);
+            --btn-hover-gradient: linear-gradient(135deg, #7b6bf0 0%, #9a6ff8 50%, #b373e0 100%);
+            --placeholder-bg: #faf9fd;
+            --placeholder-border: #e8e4f4;
+            --tag-bg: #f3f0ff;
+            --tag-text: #6c5ce7;
+            --divider: #ece9f5;
+            --radius-sm: 10px;
+            --radius-md: 16px;
+            --radius-lg: 22px;
+            --radius-xl: 28px;
+            --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-heading: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'HarmonyOS Sans', sans-serif;
+            --font-body: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'HarmonyOS Sans', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(170deg,
+                    var(--bg-gradient-start) 0%,
+                    var(--bg-gradient-mid) 40%,
+                    var(--bg-gradient-end) 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+            position: relative;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ============ 背景装饰 ============ */
+        .bg-decoration {
+            position: fixed;
+            pointer-events: none;
+            z-index: 0;
+            border-radius: 50%;
+            opacity: 0.4;
+            filter: blur(60px);
+            will-change: transform;
+        }
+
+        .bg-decoration--1 {
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, rgba(108, 92, 231, 0.18) 0%, transparent 70%);
+            top: -80px;
+            right: -60px;
+            animation: floatDeco1 18s ease-in-out infinite;
+        }
+
+        .bg-decoration--2 {
+            width: 260px;
+            height: 260px;
+            background: radial-gradient(circle, rgba(139, 92, 240, 0.14) 0%, transparent 70%);
+            bottom: -50px;
+            left: -70px;
+            animation: floatDeco2 22s ease-in-out infinite;
+        }
+
+        .bg-decoration--3 {
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(163, 99, 212, 0.12) 0%, transparent 70%);
+            top: 45%;
+            left: 55%;
+            animation: floatDeco3 15s ease-in-out infinite;
+        }
+
+        @keyframes floatDeco1 {
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+            25% {
+                transform: translate(-40px, 30px) scale(1.1);
+            }
+            50% {
+                transform: translate(-20px, -20px) scale(0.9);
+            }
+            75% {
+                transform: translate(30px, 15px) scale(1.05);
+            }
+        }
+
+        @keyframes floatDeco2 {
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+            30% {
+                transform: translate(35px, -25px) scale(1.12);
+            }
+            60% {
+                transform: translate(-15px, 20px) scale(0.88);
+            }
+            85% {
+                transform: translate(20px, -10px) scale(1.04);
+            }
+        }
+
+        @keyframes floatDeco3 {
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+            40% {
+                transform: translate(-25px, -30px) scale(1.08);
+            }
+            70% {
+                transform: translate(20px, 15px) scale(0.92);
+            }
+        }
+
+        /* ============ 主容器 ============ */
+        .main-container {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 32px 20px 48px;
+            width: 100%;
+            flex: 1;
+        }
+
+        /* ============ 头部区域 ============ */
+        .site-header {
+            text-align: center;
+            padding: 36px 20px 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header-icon {
+            display: inline-block;
+            width: 56px;
+            height: 56px;
+            background: var(--btn-gradient);
+            border-radius: var(--radius-md);
+            margin-bottom: 16px;
+            box-shadow: 0 8px 28px var(--accent-glow);
+            position: relative;
+            animation: iconPulse 3s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: #fff;
+        }
+
+        @keyframes iconPulse {
+            0%,
+            100% {
+                box-shadow: 0 8px 28px var(--accent-glow);
+            }
+            50% {
+                box-shadow: 0 14px 38px rgba(108, 92, 231, 0.4);
+            }
+        }
+
+        .site-title {
+            font-family: var(--font-heading);
+            font-size: clamp(2rem, 4.5vw, 2.8rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #4a3cb5 0%, #6c5ce7 40%, #8b5cf0 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .site-subtitle {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            margin-bottom: 20px;
+            letter-spacing: 0.01em;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ============ GitHub 按钮 ============ */
+        .github-link-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+
+        .github-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 11px 22px;
+            background: #fff;
+            border: 1.5px solid #e0dbf0;
+            border-radius: 50px;
+            color: #3d3566;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: var(--transition-smooth);
+            box-shadow: 0 2px 10px rgba(100, 80, 160, 0.05);
+            cursor: pointer;
+        }
+
+        .github-btn:hover {
+            border-color: var(--accent-light);
+            box-shadow: 0 6px 22px rgba(100, 80, 160, 0.13);
+            transform: translateY(-2px);
+            color: var(--accent);
+        }
+        .github-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(100, 80, 160, 0.08);
+            transition: var(--transition-fast);
+        }
+
+        .github-btn svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+        .github-btn:hover svg {
+            transform: rotate(-8deg) scale(1.05);
+        }
+
+        /* ============ 分区标题 ============ */
+        .section-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 32px 0 18px;
+            padding: 0 6px;
+        }
+        .section-label span {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+        }
+        .section-label::after {
+            content: '';
+            flex: 1;
+            height: 1.5px;
+            background: var(--divider);
+            border-radius: 2px;
+        }
+
+        /* ============ 游戏卡片网格 ============ */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            padding: 0 4px;
+        }
+
+        /* ============ 游戏卡片 ============ */
+        .game-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 22px 20px 20px;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition-smooth);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            border: 1.5px solid transparent;
+            cursor: default;
+            min-height: 200px;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--btn-gradient);
+            border-radius: 0 0 6px 6px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .game-card:hover {
+            box-shadow: var(--card-hover-shadow);
+            transform: translateY(-5px);
+            border-color: #e8e2f8;
+        }
+        .game-card:hover::before {
+            opacity: 1;
+        }
+        .game-card:active {
+            transform: translateY(-2px);
+            transition: var(--transition-fast);
+        }
+
+        /* 卡片图标 */
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 12px;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+        }
+        .card-icon--snake {
+            background: #e8fdf0;
+        }
+        .card-icon--minesweeper {
+            background: #fff3e6;
+        }
+        .card-icon--puzzle {
+            background: #eef0ff;
+        }
+
+        .card-title {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            position: relative;
+            z-index: 1;
+            letter-spacing: 0.01em;
+        }
+
+        .card-desc {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            flex: 1;
+            margin-bottom: 14px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 标签 */
+        .card-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+            position: relative;
+            z-index: 1;
+        }
+        .card-tag {
+            font-size: 0.72rem;
+            padding: 3px 10px;
+            border-radius: 50px;
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            font-weight: 500;
+            letter-spacing: 0.02em;
+        }
+
+        /* 开始按钮 */
+        .btn-play {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px 20px;
+            background: var(--btn-gradient);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 16px var(--accent-glow);
+            position: relative;
+            z-index: 1;
+            letter-spacing: 0.03em;
+            white-space: nowrap;
+            align-self: flex-start;
+        }
+        .btn-play:hover {
+            background: var(--btn-hover-gradient);
+            box-shadow: 0 8px 26px rgba(108, 92, 231, 0.35);
+            transform: translateY(-2px);
+        }
+        .btn-play:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 12px var(--accent-glow);
+            transition: var(--transition-fast);
+        }
+        .btn-play svg {
+            width: 15px;
+            height: 15px;
+            transition: transform 0.25s ease;
+        }
+        .btn-play:hover svg {
+            transform: translateX(3px);
+        }
+
+        /* ============ 占位卡片（预留空位） ============ */
+        .game-card--placeholder {
+            background: var(--placeholder-bg);
+            border: 2px dashed var(--placeholder-border);
+            box-shadow: none;
+            cursor: default;
+            opacity: 0.75;
+            transition: var(--transition-smooth);
+        }
+        .game-card--placeholder::before {
+            display: none;
+        }
+        .game-card--placeholder:hover {
+            box-shadow: 0 4px 16px rgba(100, 80, 160, 0.05);
+            transform: translateY(-2px);
+            border-color: #d5ceea;
+            opacity: 0.85;
+        }
+        .game-card--placeholder .card-icon {
+            background: #ece9f5;
+            color: #b5aec9;
+        }
+        .game-card--placeholder .card-title {
+            color: #8a84a0;
+        }
+        .game-card--placeholder .card-desc {
+            color: #b0aabf;
+        }
+        .game-card--placeholder .btn-play {
+            background: #d5d0e5;
+            color: #9b94b0;
+            cursor: not-allowed;
+            box-shadow: none;
+            pointer-events: none;
+        }
+        .game-card--placeholder .btn-play:hover {
+            background: #d5d0e5;
+            box-shadow: none;
+            transform: none;
+        }
+        .game-card--placeholder .card-tag {
+            background: #ece9f5;
+            color: #b0a9c2;
+        }
+        .placeholder-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            padding: 3px 10px;
+            border-radius: 50px;
+            background: #fff;
+            color: #c4bdd6;
+            border: 1px dashed #dcd7ea;
+            font-weight: 500;
+            letter-spacing: 0.03em;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ============ 页脚 ============ */
+        .site-footer {
+            text-align: center;
+            padding: 28px 20px;
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            position: relative;
+            z-index: 2;
+            letter-spacing: 0.02em;
+        }
+        .site-footer a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .site-footer a:hover {
+            color: var(--accent-light);
+            text-decoration: underline;
+        }
+        .footer-divider {
+            display: inline-block;
+            margin: 0 8px;
+            color: #d5d0e0;
+        }
+
+        /* ============ Toast 提示 ============ */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #3d3566;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            z-index: 999;
+            box-shadow: 0 8px 28px rgba(60, 50, 100, 0.3);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+        }
+        .toast--visible {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ============ 响应式设计 ============ */
+        @media (max-width: 1024px) {
+            .game-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+            .main-container {
+                padding: 24px 16px 40px;
+            }
+            .site-header {
+                padding: 24px 12px 16px;
+            }
+            .site-title {
+                font-size: clamp(1.7rem, 4vw, 2.3rem);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .game-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+            .main-container {
+                padding: 16px 12px 32px;
+            }
+            .site-header {
+                padding: 18px 8px 12px;
+            }
+            .site-title {
+                font-size: 1.7rem;
+            }
+            .site-subtitle {
+                font-size: 0.9rem;
+            }
+            .game-card {
+                padding: 18px 16px 16px;
+                min-height: auto;
+                border-radius: var(--radius-md);
+            }
+            .card-title {
+                font-size: 1.05rem;
+            }
+            .card-desc {
+                font-size: 0.82rem;
+            }
+            .btn-play {
+                font-size: 0.85rem;
+                padding: 9px 18px;
+            }
+            .github-btn {
+                font-size: 0.85rem;
+                padding: 10px 18px;
+            }
+            .bg-decoration--1 {
+                width: 180px;
+                height: 180px;
+                top: -40px;
+                right: -30px;
+            }
+            .bg-decoration--2 {
+                width: 150px;
+                height: 150px;
+                bottom: -30px;
+                left: -40px;
+            }
+            .bg-decoration--3 {
+                width: 120px;
+                height: 120px;
+            }
+            .section-label {
+                margin: 22px 0 12px;
+            }
+            .section-label span {
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .game-grid {
+                gap: 10px;
+            }
+            .game-card {
+                padding: 14px 12px 14px;
+                border-radius: var(--radius-sm);
+            }
+            .btn-play {
+                width: 100%;
+                text-align: center;
+                justify-content: center;
+            }
+            .card-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 18px;
+                border-radius: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== 背景装饰 ==================== -->
+    <div class="bg-decoration bg-decoration--1"></div>
+    <div class="bg-decoration bg-decoration--2"></div>
+    <div class="bg-decoration bg-decoration--3"></div>
+
+    <!-- ==================== 主容器 ==================== -->
+    <div class="main-container">
+
+        <!-- ========== 头部 ========== -->
+        <header class="site-header">
+            <div class="header-icon" aria-hidden="true">🎮</div>
+            <h1 class="site-title">TreGameWeb</h1>
+            <p class="site-subtitle">一个用于打发时间的开源H5小游戏站点</p>
+            <div class="github-link-wrapper">
+                <a href="https://github.com/SHxiaoleya/TreGameWeb"
+                class="github-btn"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="在 GitHub 上查看源码">
+                <!-- GitHub SVG 图标 -->
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.73.084-.73 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.418-1.305.762-1.604-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.605-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12z"/>
+                </svg>
+                查看 GitHub 仓库
+            </a>
+        </div>
+    </header>
+
+    <!-- ========== 游戏列表区域 ========== -->
+    <div class="section-label">
+        <span>🎯 游戏列表</span>
+    </div>
+
+    <section class="game-grid" aria-label="游戏列表">
+
+        <!-- ===== 游戏卡片 1：贪吃蛇 ===== -->
+        <article class="game-card">
+            <div class="card-icon card-icon--snake">🐍</div>
+            <h3 class="card-title">贪吃蛇</h3>
+            <p class="card-desc">经典街机游戏，控制小蛇吃掉食物不断变长，挑战你的反应速度！</p>
+            <div class="card-tags">
+                <span class="card-tag">经典</span>
+                <span class="card-tag">休闲</span>
+            </div>
+            <!-- 替换 href 为实际游戏页面地址 -->
+            <a href="#" class="btn-play" onclick="handlePlayClick(event, '贪吃蛇')">
+                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+                开始游戏
+            </a>
+        </article>
+
+        <!-- ===== 游戏卡片 2：扫雷 ===== -->
+        <article class="game-card">
+            <div class="card-icon card-icon--minesweeper">💣</div>
+            <h3 class="card-title">扫雷</h3>
+            <p class="card-desc">考验逻辑推理的经典益智游戏，小心避开隐藏的地雷！</p>
+            <div class="card-tags">
+                <span class="card-tag">益智</span>
+                <span class="card-tag">逻辑</span>
+            </div>
+            <!-- 替换 href 为实际游戏页面地址 -->
+            <a href="#" class="btn-play" onclick="handlePlayClick(event, '扫雷')">
+                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+                开始游戏
+            </a>
+        </article>
+
+        <!-- ===== 游戏卡片 3：2048 ===== -->
+        <article class="game-card">
+            <div class="card-icon card-icon--puzzle">🔢</div>
+            <h3 class="card-title">2048</h3>
+            <p class="card-desc">滑动合并数字方块，努力凑出2048，简单又上瘾的数字游戏。</p>
+            <div class="card-tags">
+                <span class="card-tag">数字</span>
+                <span class="card-tag">上瘾</span>
+            </div>
+            <!-- 替换 href 为实际游戏页面地址 -->
+            <a href="/2048" class="btn-play" onclick="handlePlayClick(event, '2048')">
+                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+                开始游戏
+            </a>
+        </article>
+
+        <!-- ===== 预留空位 1 ===== -->
+        <article class="game-card game-card--placeholder">
+            <span class="placeholder-badge">🔧 预留空位</span>
+            <div class="card-icon">❓</div>
+            <h3 class="card-title">新游戏位置</h3>
+            <p class="card-desc">此处等待添加新的小游戏，替换游戏名称、简介和链接即可。</p>
+            <div class="card-tags">
+                <span class="card-tag">待添加</span>
+            </div>
+            <button class="btn-play" disabled>
+                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+                敬请期待
+            </button>
+        </article>
+
+        <!-- ===== 预留空位 2 ===== -->
+        <article class="game-card game-card--placeholder">
+            <span class="placeholder-badge">🔧 预留空位</span>
+            <div class="card-icon">✨</div>
+            <h3 class="card-title">新游戏位置</h3>
+            <p class="card-desc">此处等待添加新的小游戏，替换游戏名称、简介和链接即可。</p>
+            <div class="card-tags">
+                <span class="card-tag">待添加</span>
+            </div>
+            <button class="btn-play" disabled>
+                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+                敬请期待
+            </button>
+        </article>
+
+        <!-- ===== 预留空位 3 ===== -->
+        <article class="game-card game-card--placeholder">
+            <span class="placeholder-badge">🔧 预留空位</span>
+            <div class="card-icon">🚀</div>
+            <h3 class="card-title">新游戏位置</h3>
+            <p class="card-desc">此处等待添加新的小游戏，替换游戏名称、简介和链接即可。</p>
+            <div class="card-tags">
+                <span class="card-tag">待添加</span>
+            </div>
+            <button class="btn-play" disabled>
+                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+                敬请期待
+            </button>
+        </article>
+
+    </section>
+
+</div>
+
+<!-- ==================== 页脚 ==================== -->
+<footer class="site-footer">
+    <span>© 2026 TreGameWeb</span>
+    <span class="footer-divider">|</span>
+    <span>开源H5小游戏站点</span>
+    <span class="footer-divider">|</span>
+    <a href="https://github.com/SHxiaoleya/TreGameWeb" target="_blank" rel="noopener noreferrer">GitHub</a>
+</footer>
+
+<!-- ==================== Toast 提示 ==================== -->
+<div class="toast" id="toast" aria-live="polite"></div>
+
+<!-- ==================== 脚本 ==================== -->
+<script>
+    /**
+     * 处理"开始游戏"按钮点击
+     * - 如果游戏已实现，替换 href 为实际地址后此函数可移除
+     * - 当前示例游戏点击后会弹出提示
+     * @param {Event} event - 点击事件
+     * @param {string} gameName - 游戏名称
+     */
+    function handlePlayClick(event, gameName) {
+        // 如果 href 是 "#"（占位链接），则阻止跳转并显示提示
+        const link = event.currentTarget;
+        if (link.getAttribute('href') === '#') {
+            event.preventDefault();
+            showToast(`🎮 "${gameName}" 游戏正在开发中，敬请期待！`);
+        }
+        // 当您添加了真实游戏页面后，将 href 替换为实际地址（如 'games/snake.html'），
+        // 此函数将自动放行，正常跳转。
+    }
+
+    /**
+     * 显示底部 Toast 提示
+     * @param {string} message - 提示信息
+     * @param {number} duration - 显示时长（毫秒）
+     */
+    function showToast(message, duration = 2200) {
+        const toast = document.getElementById('toast');
+        // 清除之前的定时器
+        if (toast._timeout) {
+            clearTimeout(toast._timeout);
+            toast.classList.remove('toast--visible');
+        }
+        toast.textContent = message;
+        // 强制回流后添加动画类
+        void toast.offsetWidth;
+        toast.classList.add('toast--visible');
+        toast._timeout = setTimeout(() => {
+            toast.classList.remove('toast--visible');
+            toast._timeout = null;
+        }, duration);
+    }
+
+    /**
+     * ============ 添加新游戏指南 ============
+     *
+     * 要添加新游戏，请在 .game-grid 容器中复制以下模板，
+     * 并放在所有 .game-card--placeholder 之前：
+     *
+     * -------------------------------------------------------
+     * <article class="game-card">
+     *   <div class="card-icon card-icon--snake">🎮</div>
+     *   <h3 class="card-title">【游戏名称】</h3>
+     *   <p class="card-desc">【游戏简介描述】</p>
+     *   <div class="card-tags">
+     *     <span class="card-tag">【标签1】</span>
+     *     <span class="card-tag">【标签2】</span>
+     *   </div>
+     *   <a href="【游戏页面URL】" class="btn-play">
+     *     <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+     *     开始游戏
+     *   </a>
+     * </article>
+     * -------------------------------------------------------
+     *
+     * 注意：
+     * 1. 将【游戏名称】替换为实际游戏名
+     * 2. 将【游戏简介描述】替换为简短介绍
+     * 3. 将【游戏页面URL】替换为实际链接（如 'games/xxx.html'）
+     * 4. card-icon--snake 可改为 card-icon--minesweeper 或 card-icon--puzzle
+     *    或在 CSS 中自定义新的图标背景色类
+     * 5. 可以删除或保留预留空位卡片
+     * 6. GitHub 链接请替换为您的实际仓库地址
+     */
+</script>
+
+</body>
+</html>
